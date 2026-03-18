@@ -1,0 +1,70 @@
+version: 2
+
+models:
+  - name: mart_sales_daily
+    description: "Revenue dan order trend harian"
+    tests:
+      - dbt_utils.expression_is_true:
+          expression: "total_revenue >= 0"
+    columns:
+      - name: order_date
+        tests:
+          - not_null
+          - unique
+      - name: total_revenue
+        tests:
+          - not_null
+      - name: total_orders
+        tests:
+          - not_null
+
+  - name: mart_seller_performance
+    description: "Performa setiap seller"
+    columns:
+      - name: seller_id
+        tests:
+          - unique
+          - not_null
+      - name: total_revenue
+        tests:
+          - not_null
+      - name: late_delivery_pct
+        tests:
+          - not_null
+
+  - name: mart_product_category
+    description: "Revenue per kategori per kuartal"
+    columns:
+      - name: product_category_name
+        tests:
+          - not_null
+      - name: total_revenue
+        tests:
+          - not_null
+
+  - name: mart_delivery_performance
+    description: "Performa pengiriman per state"
+    columns:
+      - name: customer_state
+        tests:
+          - unique
+          - not_null
+      - name: late_delivery_pct
+        tests:
+          - not_null
+
+  - name: mart_customer_segmentation
+    description: "Distribusi customer berdasarkan frekuensi pembelian"
+    columns:
+      - name: customer_segment
+        tests:
+          - unique
+          - not_null
+          - accepted_values:
+              values:
+                - "One-time Buyer"
+                - "Occasional Buyer"
+                - "Loyal Buyer"
+      - name: total_customers
+        tests:
+          - not_null

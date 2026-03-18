@@ -110,10 +110,6 @@ Every task in the DAG can be re-run safely without duplicating data. Bronze uses
 
 Silver is clean and structured. Gold is pure business logic — aggregations, window functions, rankings. dbt's `ref()` system handles dependency resolution automatically, and `dbt test` validates the output at every run. This is exactly the use case dbt was built for.
 
-**Why star schema in Silver, not just flatten everything?**
-
-Surrogate keys in dimension tables decouple the fact table from natural key changes. A customer's `customer_id` in Olist is per-order — not per-customer — so using `customer_unique_id` as the business key while maintaining a separate surrogate key is a deliberate modeling decision that prevents downstream join issues.
-
 ---
 
 ## Tech Stack
@@ -144,43 +140,18 @@ Dimension tables (`dim_customers`, `dim_sellers`, `dim_products`) load in parall
 ## Project Structure
 
 ```
-olist-analytics-pipeline
-├── arsitektur.md
-├── config
+.
 ├── dags
-│   └── ecommerce_dag.py
 ├── data
-│   └── raw
 ├── dbt
-│   ├── dbt_packages
-│   ├── dbt_project.yml
-│   ├── logs
-│   ├── models
-│   ├── package-lock.yml
-│   ├── packages.yml
-│   ├── profiles.yml
-│   ├── target
-│   └── tests
 ├── docker-compose.yml
 ├── Dockerfile
 ├── docs
-│   ├── Architecture.png
-│   ├── DAG.png
-│   └── Dashboard.png
+├── list.md
 ├── README.md
 ├── scripts
-│   ├── __init__.py
-│   ├── load_bronze.py
-│   └── generate_dim_date.py
 ├── sql
-│   ├── bronze
-│   ├── gold
-│   ├── schema
-│   └── silver
 └── tests
-    ├── conftest.py
-    ├── test_generate_dim_time.py
-    └── test_load_bronze.py
 ```
 
 ---
@@ -209,6 +180,8 @@ docker compose up --build
 
 # Open dashboard
 # Open Metabase at localhost:3000
+docker exec -it airflow bash -c "cd /opt/airflow/dbt && dbt deps"
+docker exec -it --user root airflow bash -c "chown -R airflow: /opt/airflow/dbt/target"
 ```
 
 ---

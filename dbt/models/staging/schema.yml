@@ -1,0 +1,84 @@
+version: 2
+
+sources:
+  - name: silver
+    schema: silver
+    tables:
+      - name: fact_orders
+      - name: dim_customers
+      - name: dim_sellers
+      - name: dim_products
+      - name: dim_time
+
+models:
+  - name: stg_orders
+    description: "Staging dari silver.fact_orders — grain 1 row = 1 order item"
+    columns:
+      - name: order_item_key
+        description: "Surrogate key fact table"
+        tests:
+          - unique
+          - not_null
+      - name: order_id
+        tests:
+          - not_null
+      - name: customer_key
+        tests:
+          - not_null
+      - name: product_key
+        tests:
+          - not_null
+      - name: seller_key
+        tests:
+          - not_null
+      - name: order_date_key
+        tests:
+          - not_null
+
+  - name: stg_customers
+    description: "Staging dari silver.dim_customers"
+    columns:
+      - name: customer_key
+        description: "Surrogate key dimension customer"
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        tests:
+          - not_null
+
+  - name: stg_sellers
+    description: "Staging dari silver.dim_sellers"
+    columns:
+      - name: seller_key
+        description: "Surrogate key dimension seller"
+        tests:
+          - unique
+          - not_null
+      - name: seller_id
+        tests:
+          - not_null
+
+  - name: stg_products
+    description: "Staging dari silver.dim_products"
+    columns:
+      - name: product_key
+        description: "Surrogate key dimension product"
+        tests:
+          - unique
+          - not_null
+      - name: product_id
+        tests:
+          - not_null
+
+  - name: stg_time
+    description: "Staging dari silver.dim_time"
+    columns:
+      - name: date_key
+        description: "Primary key format YYYYMMDD"
+        tests:
+          - unique
+          - not_null
+      - name: full_date
+        tests:
+          - not_null
