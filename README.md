@@ -43,7 +43,6 @@ Key metrics visible in the dashboard:
 From the Metabase dashboard built on top of this pipeline:
 
 - **Retention rate is only 14.92%** — 85 out of 100 customers never return
-- **Late delivery correlates directly with lower review scores** — states with >20% late delivery rate (AL, MA) show avg review scores below 4.0 vs 4.2+ for on-time states
 - **`cama_mesa_banho` dominates revenue** — top category by a wide margin, yet delivery performance in high-order states remains poor
 - **Revenue grew 21.77% YoY** — order volume followed the same trend, suggesting healthy demand but a retention problem, not an acquisition problem
 
@@ -141,17 +140,22 @@ Dimension tables (`dim_customers`, `dim_sellers`, `dim_products`) load in parall
 
 ```
 .
-├── dags
-├── data
-├── dbt
-├── docker-compose.yml
+olist-analytics-pipeline/
+├── dags/                    ← Airflow DAG
+├── scripts/                 ← ingestion scripts
+├── sql/
+│   ├── schema/              ← DDL Bronze + Silver
+│   ├── silver/              ← SQL transforms
+│   └── gold/                ← ad-hoc queries
+├── dbt/
+│   └── models/
+│       ├── staging/
+│       ├── intermediate/
+│       └── marts/           ← 5 final serving tables
+├── tests/                   ← pytest unit tests
+├── docs/                    ← architecture + data dictionary
 ├── Dockerfile
-├── docs
-├── list.md
-├── README.md
-├── scripts
-├── sql
-└── tests
+└── docker-compose.yml
 ```
 
 ---
@@ -176,12 +180,12 @@ cp .env.example .env
 docker compose up --build
 
 # Trigger pipeline
-# Open Airflow at localhost:8080 → trigger DAG: ecommerce
+# Open Airflow at localhost:8080 → trigger DAG: olist
+docker exec -it airflow bash -c "cd /opt/airflow/dbt && dbt deps"
+docker exec -it --user root airflow bash -c "chown -R airflow: /opt/airflow/dbt/target"
 
 # Open dashboard
 # Open Metabase at localhost:3000
-docker exec -it airflow bash -c "cd /opt/airflow/dbt && dbt deps"
-docker exec -it --user root airflow bash -c "chown -R airflow: /opt/airflow/dbt/target"
 ```
 
 ---
