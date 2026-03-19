@@ -1,5 +1,6 @@
 # Olist Analytics Pipeline
 
+![CI](https://github.com/hrmneffdii/olist-analytics-pipeline/actions/workflows/ci.yml/badge.svg)
 ![Python](https://img.shields.io/badge/Python-3.12-blue)
 ![dbt](https://img.shields.io/badge/dbt-1.10-orange)
 ![Airflow](https://img.shields.io/badge/Airflow-3.1.7-017CEE)
